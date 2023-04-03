@@ -60,11 +60,11 @@
         <meta property="og:type" content="article">
         <meta property="og:title" content="Python工具开发 | 端口扫描">
         <meta property="og:url" content="pythongong-ju-kai-fa-duan-kou-sao-miao.html">
-        <meta property="og:description" content="原创声明：转载本文请标注出处和作者，望尊重作者劳动成果！感谢！ 前言：打算以python语言为主，0 到 1 写一个信息收集工具开发系列。本 …">
-        <meta property="article:published_time" content="星期四, 三月 23, 2023">
+        <meta property="og:description" content="原创文章工具开发渗透技术原创声明：转载本文请标注出处和作者，望尊重作者劳动成果！感谢！ 前言：打算以python语言为主，0 到 1 写一 …">
+        <meta property="article:published_time" content="星期一, 四月 03, 2023">
         <meta name="twitter:title" content="Python工具开发 | 端口扫描">
-        <meta name="twitter:description" content="原创声明：转载本文请标注出处和作者，望尊重作者劳动成果！感谢！ 前言：打算以python语言为主，0 到 1 写一个信息收集工具开发系列。本 …">
-        <meta name="description" content="原创声明：转载本文请标注出处和作者，望尊重作者劳动成果！感谢！ 前言：打算以python语言为主，0 到 1 写一个信息收集工具开发系列。本 …">
+        <meta name="twitter:description" content="原创文章工具开发渗透技术原创声明：转载本文请标注出处和作者，望尊重作者劳动成果！感谢！ 前言：打算以python语言为主，0 到 1 写一 …">
+        <meta name="description" content="原创文章工具开发渗透技术原创声明：转载本文请标注出处和作者，望尊重作者劳动成果！感谢！ 前言：打算以python语言为主，0 到 1 写一 …">
         <meta name="twitter:creator" content="@">
         <meta property="og:image" content="./theme/images/logo.png">
         <meta name="twitter:image" content="./theme/images/logo.png">
@@ -109,11 +109,11 @@
         <header class="post-header">
             <h1 class="post-title" itemprop="headline">Python工具开发 | 端口扫描</h1>
             <section class="post-meta">
-                <time class="post-date" itemprop="datePublished" datetime="2023YYY-11M-%DD">星期四, 三月 23, 2023</time>
+                <time class="post-date" itemprop="datePublished" datetime="2023YYY-41M-%DD">星期一, 四月 03, 2023</time>
                 on             </section>
         </header>
         <section class="post-content">
-            <p><code>原创声明：转载本文请标注出处和作者，望尊重作者劳动成果！感谢！</code></p>
+            <p>原创文章工具开发渗透技术<br /><code>原创声明：转载本文请标注出处和作者，望尊重作者劳动成果！感谢！</code></p>
 <blockquote>
 <p>前言：打算以python语言为主，0 到 1 写一个信息收集工具开发系列。本文主要讲讲端口工具开发思路，会涉及到“多线程”、“协程”、“socket”相关的知识。</p>
 </blockquote>
@@ -192,7 +192,7 @@
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Total time:</span><span class="si">{</span><span class="n">end</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">start</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 </code></pre></div>
 
-<p>通过测试，程序运行时间大约6秒，显然我们对这个速度是不满意的，如果我们要扫描一个IP的大量端口就需要用到python的并发编程。<br /><img alt="image.png" src="images/1679569865135_0.png">
+<p>通过测试，程序运行时间大约6秒，显然我们对这个速度是不满意的，如果我们要扫描一个IP的大量端口就需要用到python的并发编程。<br /><img alt="image.png" src="images/1680504086555/1680504086556_0.png">
 <a name="jQ8bb"></a></p>
 <h4>多线程版本</h4>
 <p>我们先看例子，要如何使用多线程优化端口扫描：</p>
@@ -237,7 +237,7 @@
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Total time:</span><span class="si">{</span><span class="n">end</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">start</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 </code></pre></div>
 
-<p>上面的代码主要是通过继承线程类，然后调用多线程执行任务。过测试，多线程端口扫描本地全端口，运行时间大约21秒。<br /><img alt="image.png" src="images/1679569865354_1.png"><br />扫描一个外网IP的时间，大概是36秒。<br /><img alt="image.png" src="images/1679569865509_2.png">
+<p>上面的代码主要是通过继承线程类，然后调用多线程执行任务。过测试，多线程端口扫描本地全端口，运行时间大约21秒。<br /><img alt="image.png" src="images/1680504086555/1680504086698_1.png"><br />扫描一个外网IP的时间，大概是36秒。<br /><img alt="image.png" src="images/1680504086555/1680504086844_2.png">
 <a name="CwuNk"></a></p>
 <h4>线程池版本</h4>
 <p>线程池版本比起多线程，前者运行会更稳定，而且支持自定义设置并发数：</p>
@@ -275,7 +275,7 @@
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Total time:</span><span class="si">{</span><span class="n">end</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">start</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 </code></pre></div>
 
-<p>通过测试，线程池版本的扫描本地全端口，并发数设置在5000时，运行时间大约28秒左右。<br /><img alt="image.png" src="images/1679569865647_3.png"><br />扫描一个外网IP的时间，大概是43秒左右。<br /><img alt="image.png" src="images/1679569865765_4.png">
+<p>通过测试，线程池版本的扫描本地全端口，并发数设置在5000时，运行时间大约28秒左右。<br /><img alt="image.png" src="images/1680504086555/1680504086973_3.png"><br />扫描一个外网IP的时间，大概是43秒左右。<br /><img alt="image.png" src="images/1680504086555/1680504087100_4.png">
 <a name="vrE7L"></a></p>
 <h4>协程版本</h4>
 <p>协程版本的实现比较简单，主要就是<code>asyncio</code>库的使用。需要注意的是python异步协程的写法，如果你不了解异步，可能需要自行补充相关的知识。</p>
@@ -307,7 +307,7 @@
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Total time:</span><span class="si">{</span><span class="n">end</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">start</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 </code></pre></div>
 
-<p>通过测试，协程版本的扫描本地全端口，运行时间大约3秒左右。<br /><img alt="image.png" src="images/1679569865898_5.png"><br />扫描一个外网IP的时间，大概是6秒左右。<br /><img alt="image.png" src="images/1679569866031_6.png">
+<p>通过测试，协程版本的扫描本地全端口，运行时间大约3秒左右。<br /><img alt="image.png" src="images/1680504086555/1680504087254_5.png"><br />扫描一个外网IP的时间，大概是6秒左右。<br /><img alt="image.png" src="images/1680504086555/1680504087389_6.png">
 <a name="p9hcJ"></a></p>
 <h4>协程并发控制版本</h4>
 <p>我们知道python的标准库中并没有协程池的用法，不过提供了<strong>asyncio.Semaphore</strong>来帮助我们控制同一时间协程并发的数量。通过控制协程的并发数量，我们更加精准的扫描开放的端口。</p>
@@ -340,7 +340,7 @@
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Total time:</span><span class="si">{</span><span class="n">end</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">start</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 </code></pre></div>
 
-<p>经过测试，设置协程并发数为5000后扫描本地全端口，运行时间大约29秒左右：<br /><img alt="image.png" src="images/1679569866171_7.png"><br />扫描一个外网IP的时间，大概是44秒左右。<br /><img alt="image.png" src="images/1679569866324_8.png"><br />那么实现端口扫描的方法那么多，我们该怎么去选择呢？从多线程、协程的结果来看，如果抛开结果准确度的问题，显然使用协程的方式扫描速度会更快，因为协程比线程的开销会更小。
+<p>经过测试，设置协程并发数为5000后扫描本地全端口，运行时间大约29秒左右：<br /><img alt="image.png" src="images/1680504086555/1680504087533_7.png"><br />扫描一个外网IP的时间，大概是44秒左右。<br /><img alt="image.png" src="images/1680504086555/1680504087674_8.png"><br />那么实现端口扫描的方法那么多，我们该怎么去选择呢？从多线程、协程的结果来看，如果抛开结果准确度的问题，显然使用协程的方式扫描速度会更快，因为协程比线程的开销会更小。
 <a name="c2zkt"></a></p>
 <h3>实现命令行接口</h3>
 <p>在python的标准库中，存在一个专门用于处理命令行接口的库：<strong>argparse</strong>。使用方法也很简单，可以自行阅读官方文档获取帮助：<a href="https://docs.python.org/3/library/argparse.html">https://docs.python.org/3/library/argparse.html</a><br />下面是添加了命令行接口的版本：</p>
@@ -408,7 +408,7 @@
     <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Total time:</span><span class="si">{</span><span class="n">end</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">start</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 </code></pre></div>
 
-<p>上面新添加了一个<strong>get_portlist</strong>方法，用于处理命令输入的端口范围。看看效果：<br /><img alt="image.png" src="images/1679569866471_9.png">
+<p>上面新添加了一个<strong>get_portlist</strong>方法，用于处理命令输入的端口范围。看看效果：<br /><img alt="image.png" src="images/1680504086555/1680504087797_9.png">
 <a name="ixk1Z"></a></p>
 <h3>实现进度条功能</h3>
 <p>推荐一个强大的终端的UI库：<a href="https://rich.readthedocs.io/en/stable/index.html">rich</a>，后续系列的文章也会大量用到这个库。安装: <code>pip install rich</code></p>
@@ -483,16 +483,18 @@
     <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Total time:</span><span class="si">{</span><span class="n">end</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">start</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 </code></pre></div>
 
-<p>最后进度条显示的效果如下：<br /><img alt="image.png" src="images/1679569866602_10.png">
+<p>最后进度条显示的效果如下：<br /><img alt="image.png" src="images/1680504086555/1680504087928_10.png">
 <a name="qe9Zp"></a></p>
 <h3>实现批量扫描和逻辑优化</h3>
-<p>新增了一个可以控制并发数的接口，然后添加了批量扫描和结果导出的功能，最终的成品如下：<br /><img alt="image.png" src="images/1679569866721_11.png">通过在同目录下，把需要批量扫描的IP放到<strong>targets.txt</strong>文件下，调用<strong>--file</strong>接口即可批量扫描。最后会在同目录下生成结果文件<strong>results.txt</strong>。
+<p>新增了一个可以控制并发数的接口，然后添加了批量扫描和结果导出的功能，最终的成品如下：<br /><img alt="image.png" src="images/1680504086555/1680504088035_11.png">通过在同目录下，把需要批量扫描的IP放到<strong>targets.txt</strong>文件下，调用<strong>--file</strong>接口即可批量扫描。最后会在同目录下生成结果文件<strong>results.txt</strong>。
 <a name="eh25w"></a></p>
 <h3>END</h3>
 <p>后续会继续更新相关系列文章，感兴趣的可以持续关注一下。</p>
         </section>
         <!-- BEGIN LINK -->
-
+        <a rel="nofollow" href="https://affiliate.namecheap.com/?affId=118886" target="_blank">
+            <img src="https://files.namecheap.com/graphics/linkus/234x60-2.gif" width="234" height="60" border="0" alt="Namecheap.com">
+        </a>
         <!-- END LINK -->
         <footer class="post-footer">
             <figure class="author-image">
@@ -522,25 +524,15 @@
     </article>
 </main>
 <aside class="read-next">
-    <!-- a class="read-next-story" style="background-image: url('')" href="./js-hook-shi-zhan-mou-wang-shang-yin-xing-jsjia-mi-suan-fa-fen-xi.html" -->
-    <a class="read-next-story" href="./js-hook-shi-zhan-mou-wang-shang-yin-xing-jsjia-mi-suan-fa-fen-xi.html">
+    <!-- a class="read-next-story prev" style="background-image: url('')" href="./frida-hook-shi-zhan-mou-yin-xing-appshu-ju-jia-jie-mi-fen-xi.html" -->
+    <a class="read-next-story prev" href="./frida-hook-shi-zhan-mou-yin-xing-appshu-ju-jia-jie-mi-fen-xi.html">
         <section class="post">
-            <h2>JS Hook 实战 | 某网上银行JS加密算法分析</h2>
-            <!-- p><p>原创文章WEB渗透渗透技术<br /><code>原创声明：转载本文请标注出处和作者，望尊重作者劳动成果！感谢！</code></p>
+            <h2>Frida Hook 实战 | 某银行APP数据加解密分析</h2>
+            <!-- p><p>原创文章APP渗透渗透技术<br /><code>原创声明：转载本文请标注出处和作者，望尊重作者劳动成果！感谢！</code></p>
 <blockquote>
-<p>前言：一篇简单入门级别的JS加解密hook文章。</p>
+<p>前言：一篇简单入门级别的加解密hook文章。</p>
 </blockquote>
-<div class="highlight"><pre><span></span><code>浏览器：firefox
-抓包 …</code></pre></div></p -->
-        </section>
-    </a>
-    <!-- a class="read-next-story prev" style="background-image: url('')" href="./yi-dong-an-quan-an-zhuo-ce-shi-huan-jing-da-jian.html" -->
-    <a class="read-next-story prev" href="./yi-dong-an-quan-an-zhuo-ce-shi-huan-jing-da-jian.html">
-        <section class="post">
-            <h2>移动安全 | 安卓测试环境搭建</h2>
-            <!-- p><p><code>原创声明：转载本文请标注出处和作者，望尊重作者劳动成果！感谢！</code></p>
-<blockquote>
-<p>前言：这里推荐两个测试环境，分别是lineageOS和Kali Nethunter。lineageOS支持开启adb root权限进行frida调试，通过这个 …</p></blockquote></p -->
+<div class="highlight"><pre><span></span><code>安卓测 …</code></pre></div></p -->
         </section>
     </a>
 </aside>             <footer class="site-footer clearfix" role="contentinfo" itemscope itemtype="http://schema.org/WPFooter">

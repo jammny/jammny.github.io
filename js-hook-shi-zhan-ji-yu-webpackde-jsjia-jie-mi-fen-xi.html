@@ -61,7 +61,7 @@
         <meta property="og:title" content="JS Hook 实战 | 基于Webpack的JS加解密分析">
         <meta property="og:url" content="js-hook-shi-zhan-ji-yu-webpackde-jsjia-jie-mi-fen-xi.html">
         <meta property="og:description" content="原创文章WEB渗透渗透技术原创声明：转载本文请标注出处和作者，望尊重作者劳动成果！感谢！ 前言：在对某站点短信验证码业务进行接口 …">
-        <meta property="article:published_time" content="星期四, 三月 23, 2023">
+        <meta property="article:published_time" content="星期一, 四月 03, 2023">
         <meta name="twitter:title" content="JS Hook 实战 | 基于Webpack的JS加解密分析">
         <meta name="twitter:description" content="原创文章WEB渗透渗透技术原创声明：转载本文请标注出处和作者，望尊重作者劳动成果！感谢！ 前言：在对某站点短信验证码业务进行接口 …">
         <meta name="description" content="原创文章WEB渗透渗透技术原创声明：转载本文请标注出处和作者，望尊重作者劳动成果！感谢！ 前言：在对某站点短信验证码业务进行接口 …">
@@ -109,7 +109,7 @@
         <header class="post-header">
             <h1 class="post-title" itemprop="headline">JS Hook 实战 | 基于Webpack的JS加解密分析</h1>
             <section class="post-meta">
-                <time class="post-date" itemprop="datePublished" datetime="2023YYY-22M-%DD">星期四, 三月 23, 2023</time>
+                <time class="post-date" itemprop="datePublished" datetime="2023YYY-39M-%DD">星期一, 四月 03, 2023</time>
                 on             </section>
         </header>
         <section class="post-content">
@@ -121,15 +121,17 @@
 抓包工具：yakit
 </code></pre></div>
 
-<p>1、目标站点对关键数据进行了加密，且采用非对称加密，每次加密的数据都不一样。加密情况如下：<br /><img alt="image.png" src="images/1679570560973_0.png"><br /><img alt="image.png" src="images/1679570561243_1.png"><br />2、浏览器下XHR断点调试：<br /><img alt="image.png" src="images/1679570561598_2.png"><br />3、重新发送验证码请求：<br /><img alt="image.png" src="images/1679570561787_3.png"><br />4、耐心进行调试，观察并分析堆栈内容，找到数据加密函数：：<br /><img alt="image.png" src="images/1679570562164_4.png"><br />5、代码中 t.userName 就是手机号的明文信息，接着使用<code>t.$crypt.RSA.encrypt(o.userName)</code>对其进行数据加密。<br /><img alt="image.png" src="images/1679570562490_5.png"><br />6、因此如果我们想要改手机号的话，需要hook这段方法，在数据加密之前做一个字符串替换的操作。这个过程可以通过加载自定义JS的方法实现。常见替换JS文件的方法有两种：</p>
+<p>1、目标站点对关键数据进行了加密，且采用非对称加密，每次加密的数据都不一样。加密情况如下：<br /><img alt="image.png" src="images/1680503978398/1680503978399_0.png"><br /><img alt="image.png" src="images/1680503978398/1680503978793_1.png"><br />2、浏览器下XHR断点调试：<br /><img alt="image.png" src="images/1680503978398/1680503979173_2.png"><br />3、重新发送验证码请求：<br /><img alt="image.png" src="images/1680503978398/1680503979326_3.png"><br />4、耐心进行调试，观察并分析堆栈内容，找到数据加密函数：：<br /><img alt="image.png" src="images/1680503978398/1680503979809_4.png"><br />5、代码中 t.userName 就是手机号的明文信息，接着使用<code>t.$crypt.RSA.encrypt(o.userName)</code>对其进行数据加密。<br /><img alt="image.png" src="images/1680503978398/1680503980142_5.png"><br />6、因此如果我们想要改手机号的话，需要hook这段方法，在数据加密之前做一个字符串替换的操作。这个过程可以通过加载自定义JS的方法实现。常见替换JS文件的方法有两种：</p>
 <div class="highlight"><pre><span></span><code><span class="mf">1</span><span class="err">、</span><span class="n">使用flddler抓包替换</span><span class="err">。</span>
 <span class="mf">2</span><span class="err">、</span><span class="n">chrome浏览器本地替换</span><span class="err">。（</span><span class="n">推荐</span><span class="err">）</span>
 </code></pre></div>
 
-<p>7、添加一个重载本地文件夹：<br /><img alt="image.png" src="images/1679570562780_6.png"><br />8、找到对应的JS，右键保存到重载模块。<br /><img alt="image.png" src="images/1679570563047_7.png"><br />9、接着修改一下测试数据，看是成功加载：<br /><img alt="image.png" src="images/1679570563263_8.png"><br />10、重新刷新页面，进行测试，成功打印加密信息，且与抓包内容一致。<br /><img alt="image.png" src="images/1679570563592_9.png"><br /><img alt="image.png" src="images/1679570563798_10.png"><br />11、接下的替换操作就简单，通过赋值就完事。<br /><img alt="image.png" src="images/1679570564071_11.png"><br /><img alt="image.png" src="images/1679570564282_12.png"><br />12、但是，在这个网站里面验证码发生是需要两个请求的，第一个请求主要是返回 某个动态的加密值，用于检验第二个请求数据的合法性和有效性。因此两个请求里面的手机号都是需要替换的，才能将验证码发生成功。操作方法一致，不再重复。<br /><img alt="image.png" src="images/1679570564496_13.png"></p>
+<p>7、添加一个重载本地文件夹：<br /><img alt="image.png" src="images/1680503978398/1680503980383_6.png"><br />8、找到对应的JS，右键保存到重载模块。<br /><img alt="image.png" src="images/1680503978398/1680503980521_7.png"><br />9、接着修改一下测试数据，看是成功加载：<br /><img alt="image.png" src="images/1680503978398/1680503980683_8.png"><br />10、重新刷新页面，进行测试，成功打印加密信息，且与抓包内容一致。<br /><img alt="image.png" src="images/1680503978398/1680503980943_9.png"><br /><img alt="image.png" src="images/1680503978398/1680503981164_10.png"><br />11、接下的替换操作就简单，通过赋值就完事。<br /><img alt="image.png" src="images/1680503978398/1680503981547_11.png"><br /><img alt="image.png" src="images/1680503978398/1680503981778_12.png"><br />12、但是，在这个网站里面验证码发生是需要两个请求的，第一个请求主要是返回 某个动态的加密值，用于检验第二个请求数据的合法性和有效性。因此两个请求里面的手机号都是需要替换的，才能将验证码发生成功。操作方法一致，不再重复。<br /><img alt="image.png" src="images/1680503978398/1680503981951_13.png"></p>
         </section>
         <!-- BEGIN LINK -->
-
+        <a rel="nofollow" href="https://affiliate.namecheap.com/?affId=118886" target="_blank">
+            <img src="https://files.namecheap.com/graphics/linkus/234x60-2.gif" width="234" height="60" border="0" alt="Namecheap.com">
+        </a>
         <!-- END LINK -->
         <footer class="post-footer">
             <figure class="author-image">

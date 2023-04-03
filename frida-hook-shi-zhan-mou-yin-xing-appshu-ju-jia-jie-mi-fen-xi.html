@@ -61,7 +61,7 @@
         <meta property="og:title" content="Frida Hook 实战 | 某银行APP数据加解密分析">
         <meta property="og:url" content="frida-hook-shi-zhan-mou-yin-xing-appshu-ju-jia-jie-mi-fen-xi.html">
         <meta property="og:description" content="原创文章APP渗透渗透技术原创声明：转载本文请标注出处和作者，望尊重作者劳动成果！感谢！ 前言：一篇简单入门级别的加解密hook文章。 安卓测 …">
-        <meta property="article:published_time" content="星期四, 三月 23, 2023">
+        <meta property="article:published_time" content="星期一, 四月 03, 2023">
         <meta name="twitter:title" content="Frida Hook 实战 | 某银行APP数据加解密分析">
         <meta name="twitter:description" content="原创文章APP渗透渗透技术原创声明：转载本文请标注出处和作者，望尊重作者劳动成果！感谢！ 前言：一篇简单入门级别的加解密hook文章。 安卓测 …">
         <meta name="description" content="原创文章APP渗透渗透技术原创声明：转载本文请标注出处和作者，望尊重作者劳动成果！感谢！ 前言：一篇简单入门级别的加解密hook文章。 安卓测 …">
@@ -109,7 +109,7 @@
         <header class="post-header">
             <h1 class="post-title" itemprop="headline">Frida Hook 实战 | 某银行APP数据加解密分析</h1>
             <section class="post-meta">
-                <time class="post-date" itemprop="datePublished" datetime="2023YYY-22M-%DD">星期四, 三月 23, 2023</time>
+                <time class="post-date" itemprop="datePublished" datetime="2023YYY-39M-%DD">星期一, 四月 03, 2023</time>
                 on             </section>
         </header>
         <section class="post-content">
@@ -124,15 +124,17 @@ Frida版本：14.2.7
 r0capture：https://github.com/r0ysue/r0capture
 </code></pre></div>
 
-<p>1、通过 r0capture 输出堆栈内容如下：<br /><img alt="image.png" src="images/1679570557675_0.png"><br />2、jadx 搜索关键字“cn.com.hybird.http.HttpsClient”，根据搜索结果，需要关注就两个地方：“cn.com.hybird.http.HttpsClient”和“cn.com.xxxxx.main.base.BaseActivity”。<br /><img alt="image.png" src="images/1679570558109_1.png"><br />3、先看“cn.com.xxxx.main.base.BaseActivity”的内容，关键就是<code>HttpsClient.getResObject(url, "POST", BaseActivity.this.postEncryption(url, map, key))</code><br /><img alt="image.png" src="images/1679570558309_2.png"><br />4、这里需要拆分两个部分进行分析：</p>
+<p>1、通过 r0capture 输出堆栈内容如下：<br /><img alt="image.png" src="images/1680503965848/1680503965848_0.png"><br />2、jadx 搜索关键字“cn.com.hybird.http.HttpsClient”，根据搜索结果，需要关注就两个地方：“cn.com.hybird.http.HttpsClient”和“cn.com.xxxxx.main.base.BaseActivity”。<br /><img alt="image.png" src="images/1680503965848/1680503966617_1.png"><br />3、先看“cn.com.xxxx.main.base.BaseActivity”的内容，关键就是<code>HttpsClient.getResObject(url, "POST", BaseActivity.this.postEncryption(url, map, key))</code><br /><img alt="image.png" src="images/1680503965848/1680503966824_2.png"><br />4、这里需要拆分两个部分进行分析：</p>
 <div class="highlight"><pre><span></span><code>BaseActivity.this.postEncryption(String url, Map&lt;String, String&gt; map, String key)   /* 应该是加密方法 */
 HttpsClient.getResObject(String url, String type, Map&lt;String, String&gt; map)  /* 应该是数据请求方法*/
 </code></pre></div>
 
-<p>5、先看看<code>BaseActivity.this.postEncryption(String url, Map&lt;String, String&gt; map, String key)</code>，这里定义了post数据的加密方式，需要传入三个参数，第一个是URL链接，第二个明文数据内容，第三个加密key。<code>RSA</code>的公钥信息通过<code>Base64Coder.encodeString()</code>和<code>EncodeFrontPubKey.rsaGetPublicKey()</code>进行编码加密，而数据包明文信息通过<code>SHA512.SHA512Encrypt()</code>和<code>AESUtil.encrypt()</code>进行数据加密，最后返回加密后数据。<br /><img alt="image.png" src="images/1679570558637_3.png"><br />6、接着看看<code>HttpsClient.getResObject(String url, String type, Map&lt;String, String&gt; map)</code>，这里需要传递三个参数，第一个参数是URL链接，第二个参数是请求方法，第三个是数据包内容。最后函数直接返回了<code>post()</code>的内容。而<code>post()</code>方法主要执行<code>sendInitialization(url, postorget, encodeParameters(params))</code>。<br /><img alt="image.png" src="images/1679570558941_4.png"><br />7、继续跟进<code>sendInitialization(String urlPath, String type, byte[] data)</code>，其实这里功能主要就是对“get”或“post”请求类型进行判断，然后构造数据包。<br /><img alt="image.png" src="images/1679570559191_5.png"><br />8、因此现在思路已经很清晰了，post方法中需要传入“data”参数，参数的值是加密过后的数据内容，而get方法中不需要传入“data”参数。因此可以判断只要是post请求的数据都经过加密处理，处理数据加密的位置为：<br /><img alt="image.png" src="images/1679570559453_6.png"><br />9、找到<code>cn.com.core.util.crypto.AESUtil</code>文件，可以看到这里采用aes加密，通过hook encrypy方法，打印出参数“content”的内容就是http请求包中的明文数据，通过hook <br />decrypt方法就可以实现对http响应包中数据解密。<br /><img alt="image.png" src="images/1679570559654_7.png"><br />10、<code>cn.com.core.util.crypto.SHA512</code>文件采用SHA512哈希加密，hook原理同上。<br /><img alt="image.png" src="images/1679570560020_8.png"><br />11、最后frida hook 脚本如下：<br /><img alt="image.png" src="images/1679570560315_9.png"><br />12、注入脚本<br /><img alt="image.png" src="images/1679570560577_10.png"></p>
+<p>5、先看看<code>BaseActivity.this.postEncryption(String url, Map&lt;String, String&gt; map, String key)</code>，这里定义了post数据的加密方式，需要传入三个参数，第一个是URL链接，第二个明文数据内容，第三个加密key。<code>RSA</code>的公钥信息通过<code>Base64Coder.encodeString()</code>和<code>EncodeFrontPubKey.rsaGetPublicKey()</code>进行编码加密，而数据包明文信息通过<code>SHA512.SHA512Encrypt()</code>和<code>AESUtil.encrypt()</code>进行数据加密，最后返回加密后数据。<br /><img alt="image.png" src="images/1680503965848/1680503967125_3.png"><br />6、接着看看<code>HttpsClient.getResObject(String url, String type, Map&lt;String, String&gt; map)</code>，这里需要传递三个参数，第一个参数是URL链接，第二个参数是请求方法，第三个是数据包内容。最后函数直接返回了<code>post()</code>的内容。而<code>post()</code>方法主要执行<code>sendInitialization(url, postorget, encodeParameters(params))</code>。<br /><img alt="image.png" src="images/1680503965848/1680503967514_4.png"><br />7、继续跟进<code>sendInitialization(String urlPath, String type, byte[] data)</code>，其实这里功能主要就是对“get”或“post”请求类型进行判断，然后构造数据包。<br /><img alt="image.png" src="images/1680503965848/1680503967677_5.png"><br />8、因此现在思路已经很清晰了，post方法中需要传入“data”参数，参数的值是加密过后的数据内容，而get方法中不需要传入“data”参数。因此可以判断只要是post请求的数据都经过加密处理，处理数据加密的位置为：<br /><img alt="image.png" src="images/1680503965848/1680503967874_6.png"><br />9、找到<code>cn.com.core.util.crypto.AESUtil</code>文件，可以看到这里采用aes加密，通过hook encrypy方法，打印出参数“content”的内容就是http请求包中的明文数据，通过hook <br />decrypt方法就可以实现对http响应包中数据解密。<br /><img alt="image.png" src="images/1680503965848/1680503968023_7.png"><br />10、<code>cn.com.core.util.crypto.SHA512</code>文件采用SHA512哈希加密，hook原理同上。<br /><img alt="image.png" src="images/1680503965848/1680503968308_8.png"><br />11、最后frida hook 脚本如下：<br /><img alt="image.png" src="images/1680503965848/1680503968574_9.png"><br />12、注入脚本<br /><img alt="image.png" src="images/1680503965848/1680503968956_10.png"></p>
         </section>
         <!-- BEGIN LINK -->
-
+        <a rel="nofollow" href="https://affiliate.namecheap.com/?affId=118886" target="_blank">
+            <img src="https://files.namecheap.com/graphics/linkus/234x60-2.gif" width="234" height="60" border="0" alt="Namecheap.com">
+        </a>
         <!-- END LINK -->
         <footer class="post-footer">
             <figure class="author-image">
@@ -162,6 +164,15 @@ HttpsClient.getResObject(String url, String type, Map&lt;String, String&gt; map)
     </article>
 </main>
 <aside class="read-next">
+    <!-- a class="read-next-story" style="background-image: url('')" href="./pythongong-ju-kai-fa-duan-kou-sao-miao.html" -->
+    <a class="read-next-story" href="./pythongong-ju-kai-fa-duan-kou-sao-miao.html">
+        <section class="post">
+            <h2>Python工具开发 | 端口扫描</h2>
+            <!-- p><p>原创文章工具开发渗透技术<br /><code>原创声明：转载本文请标注出处和作者，望尊重作者劳动成果！感谢！</code></p>
+<blockquote>
+<p>前言：打算以python语言为主，0 到 1 写一 …</p></blockquote></p -->
+        </section>
+    </a>
     <!-- a class="read-next-story prev" style="background-image: url('')" href="./js-hook-shi-zhan-ji-yu-webpackde-jsjia-jie-mi-fen-xi.html" -->
     <a class="read-next-story prev" href="./js-hook-shi-zhan-ji-yu-webpackde-jsjia-jie-mi-fen-xi.html">
         <section class="post">
