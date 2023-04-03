@@ -131,10 +131,7 @@ HttpsClient.getResObject(String url, String type, Map&lt;String, String&gt; map)
 
 <p>5、先看看<code>BaseActivity.this.postEncryption(String url, Map&lt;String, String&gt; map, String key)</code>，这里定义了post数据的加密方式，需要传入三个参数，第一个是URL链接，第二个明文数据内容，第三个加密key。<code>RSA</code>的公钥信息通过<code>Base64Coder.encodeString()</code>和<code>EncodeFrontPubKey.rsaGetPublicKey()</code>进行编码加密，而数据包明文信息通过<code>SHA512.SHA512Encrypt()</code>和<code>AESUtil.encrypt()</code>进行数据加密，最后返回加密后数据。<br /><img alt="image.png" src="images/1680503965848/1680503967125_3.png"><br />6、接着看看<code>HttpsClient.getResObject(String url, String type, Map&lt;String, String&gt; map)</code>，这里需要传递三个参数，第一个参数是URL链接，第二个参数是请求方法，第三个是数据包内容。最后函数直接返回了<code>post()</code>的内容。而<code>post()</code>方法主要执行<code>sendInitialization(url, postorget, encodeParameters(params))</code>。<br /><img alt="image.png" src="images/1680503965848/1680503967514_4.png"><br />7、继续跟进<code>sendInitialization(String urlPath, String type, byte[] data)</code>，其实这里功能主要就是对“get”或“post”请求类型进行判断，然后构造数据包。<br /><img alt="image.png" src="images/1680503965848/1680503967677_5.png"><br />8、因此现在思路已经很清晰了，post方法中需要传入“data”参数，参数的值是加密过后的数据内容，而get方法中不需要传入“data”参数。因此可以判断只要是post请求的数据都经过加密处理，处理数据加密的位置为：<br /><img alt="image.png" src="images/1680503965848/1680503967874_6.png"><br />9、找到<code>cn.com.core.util.crypto.AESUtil</code>文件，可以看到这里采用aes加密，通过hook encrypy方法，打印出参数“content”的内容就是http请求包中的明文数据，通过hook <br />decrypt方法就可以实现对http响应包中数据解密。<br /><img alt="image.png" src="images/1680503965848/1680503968023_7.png"><br />10、<code>cn.com.core.util.crypto.SHA512</code>文件采用SHA512哈希加密，hook原理同上。<br /><img alt="image.png" src="images/1680503965848/1680503968308_8.png"><br />11、最后frida hook 脚本如下：<br /><img alt="image.png" src="images/1680503965848/1680503968574_9.png"><br />12、注入脚本<br /><img alt="image.png" src="images/1680503965848/1680503968956_10.png"></p>
         </section>
-        <!-- BEGIN LINK -->
-        <a rel="nofollow" href="https://affiliate.namecheap.com/?affId=118886" target="_blank">
-            <img src="https://files.namecheap.com/graphics/linkus/234x60-2.gif" width="234" height="60" border="0" alt="Namecheap.com">
-        </a>
+
         <!-- END LINK -->
         <footer class="post-footer">
             <figure class="author-image">
